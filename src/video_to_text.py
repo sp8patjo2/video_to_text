@@ -76,11 +76,11 @@ def initialize_autogen(ai_autogen_utils):
 
 
 def transcribe_audio(audio_filename, transcript_filename):
-    print(f"Transcribing audio from {audio_filename}...")
+    logging.info(f"Transcribing audio from {audio_filename}...")
     
     audio_clip = AudioFileClip(audio_filename)
     duration_minutes = audio_clip.duration / 60  # Convert seconds to minutes
-    print(f"Audio duration: {duration_minutes:.2f} minutes")
+    logging.info(f"Audio duration: {duration_minutes:.2f} minutes")
 
     with open(audio_filename, "rb") as audio_file:
         transcript = openai_client.audio.transcriptions.create(
@@ -148,8 +148,7 @@ def sanitize_filename(filename, replacement_char='_'):
 
 
 def transcribe_audio_from_directory(directory):
-    transcript_directory = "transcripts"  # Assuming this is your intended directory
-
+    
     # Check and create transcript directory if it doesn't exist
     if not os.path.exists(transcript_directory):
         os.makedirs(transcript_directory)
@@ -256,7 +255,6 @@ def parse_return_ai_text(user_proxy__last_msg):
   
 
 def generate_summaries_from_transcripts(directory):
-    summary_directory = "summaries"  # Assuming this is your intended directory
 
     # Ensure the summary directory exists
     if not os.path.exists(summary_directory):
@@ -338,7 +336,7 @@ tags:
 def create_openai_client():
     # Få API-nyckeln och organisationens nyckel från miljövariablerna
     api_key = os.getenv('OPENAI_API_KEY')
-    org_key = os.getenv('OPENAI_ORG_KEY')
+    org_key = os.getenv('OPENAI_ORGID')
 
     # Kontrollera att båda nycklarna är satta, kasta undantag om någon saknas
     if not api_key:

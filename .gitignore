@@ -175,7 +175,7 @@ cython_debug/
 *.avi
 *.mp4
 *.db
-
+data/
 
 # Editors - temp-files
 \#*#
