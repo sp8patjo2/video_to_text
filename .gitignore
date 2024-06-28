@@ -8,6 +8,9 @@ __pycache__/
 BACKUP/
 .BACKUP/
 
+/cache/*
+!/cache/.gitignore
+
 
 # C extensions
 *.so
@@ -167,10 +170,35 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# media
+# media o db
 *.mp3
 *.avi
 *.mp4
+*.db
 
 
+# Editors - temp-files
+\#*#
+*~
+
+# Vim swap-filer
+*.swp
+*.swo
+
+# Emacs temporära filer
+*~
+
+# Nano editor backupfiler
+*.save
+
+# Sublime Text temporära filer
+*.tmp
+
+# Ordbehandlare (tex ex Microsoft Word) temporära filer
+*.bak
+*.tmp
+*.temp
+*.wbk
+*.asd
+*.~*
 
