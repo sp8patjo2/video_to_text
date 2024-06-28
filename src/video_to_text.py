@@ -3,7 +3,7 @@ import sys
 import re
 import datetime
 import autogen
-from ai_utils.ai_utils import AIAutogenUtils
+from classes.ai_utils import AIAutogenUtils
 from openai import OpenAI
 from moviepy.editor import VideoFileClip
 from moviepy.editor import AudioFileClip  
@@ -192,12 +192,13 @@ def ai_get_prompt_for_correcting_and_formating_transcription(video_title, transc
 
   prompt = f"""
 Kan du göra en analys av följande text.
-Det är en transcribering och den är inte helt korrekt. Det är en människa som pratar korrekta meningar så kan du rätta upp och gissa vilka ord som är mest rimliga att personen har sagt.
+Det är en transcribering och den är inte helt korrekt.
+Det är en eller flera människa som pratar. Så det är korrekta meningar så du ska rätta upp och gissa vilka ord som är mest rimliga att personen har sagt.
 Jag har originalet så du får ändra vad du vill.
 
 Om det är till någon nytta så heter videon: {video_title}
 
-här är texten
+här är texten:
 {transcribed_text}
   """
 
