@@ -3,19 +3,34 @@ import sys
 import re
 import datetime
 import autogen
-from classes.ai_utils import AIAutogenUtils
+from classes.ai_utils.ai_utils import AIAutogenUtils
 from openai import OpenAI
 from moviepy.editor import VideoFileClip
 from moviepy.editor import AudioFileClip  
+import logging
+from dotenv import load_dotenv
+
+load_dotenv()
+
+logger = None
+
+def setup_logger(log_level: int) -> logging.Logger:
+    logger    = logging.getLogger(__name__)
+    logger.setLevel(log_level)
+    handler   = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    return logger
 
 # Initialize OpenAI client
 
 
 # Directory containing all the videos and audios
-video_directory      = "videos"
-transcript_directory = "transcripts"
-audio_directory      = "mp3"        
-summary_directory    = "summaries"
+video_directory      = "data/videos"
+transcript_directory = "data/transcripts"
+audio_directory      = "data/mp3"        
+summary_directory    = "data/summaries"
 
 #
 openai_client     = None
@@ -320,20 +335,44 @@ tags:
         file.write(new_content)
 
 
+def create_openai_client():
+    # Få API-nyckeln och organisationens nyckel från miljövariablerna
+    api_key = os.getenv('OPENAI_API_KEY')
+    org_key = os.getenv('OPENAI_ORG_KEY')
+
+    # Kontrollera att båda nycklarna är satta, kasta undantag om någon saknas
+    if not api_key:
+        raise ValueError("API-nyckeln (OPENAI_API_KEY) är inte satt i .env-filen")
+
+    if not org_key:
+        raise ValueError("Organisationsnyckeln (OPENAI_ORG_KEY) är inte satt i .env-filen")
+
+    # Returnera en instans av OpenAI-klienten
+    return OpenAI(api_key=api_key, organization=org_key)
+
 
 # använder yt-dlp för att dra ner, kör något som:
 # yt-dlp --no-check-certificate -f bestaudio -x --audio-format mp3 --audio-quality 5 --add-metadata --embed-thumbnail -o "%(artist)s - %(title)s.%(ext)s" "$1"
 # drar ner kvaliteten för att hålla nere storleken på filen ... denna kombination verkar ok.
 def main():
-    global openai_client
-    global ai_autogen_utils
-  
-    ai_autogen_utils = AIAutogenUtils()    
-    ai_autogen_utils.set_config(api_key_env='OPENAI_API_KEY_T',api_org_env='OPENAI_ORGID_T',model='gpt-4o')
-    initialize_autogen(ai_autogen_utils)
-    openai_client = OpenAI(api_key=ai_autogen_utils.get_active_api_key())
-        
+    global logger
+    log_level_str = os.getenv('LOG_LEVEL', 'WARNING').upper()
+    log_level     = getattr(logging, log_level_str, logging.WARNING)
+    logger        = setup_logger(log_level)
     
+    logger.info(f"Starting {__file__}")
+    logger.info(f"CWD is {os.getcwd()}")
+
+
+    global openai_client
+    #global ai_autogen_utils
+    #ai_autogen_utils = AIAutogenUtils()    
+    #ai_autogen_utils.set_config(api_key_env='OPENAI_API_KEY_T',api_org_env='OPENAI_ORGID_T',model='gpt-4o')
+    #initialize_autogen(ai_autogen_utils)
+    
+    
+    openai_client = create_openai_client() #
+        
     # Transcribe videos from the video directory
     #transcribe_videos_from_directory(video_directory)
     # Transcribe audios from the audio directory
